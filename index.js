@@ -22,7 +22,7 @@ const PORT = 3001;
 const app = express();
 //  middleware
 app.use(express.json());
-app.use(cors({  credentials: true, origin: "https://upworks.onrender.com" }));
+app.use(cors({  credentials: true, origin: "https://upworks-front.onrender.com" }));
 app.use(cookieParser())
 app.use("/uploads", express.static(__dirname + "/uploads"))
 // begin of routes
