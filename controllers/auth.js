@@ -42,7 +42,7 @@ async function login(req, res) {
           throw err;
         }
         else {
-          res.cookie("token", token, {domain: ".upworks-backend.vercel.app", sameSite: "none"} ).json(user);
+          res.cookie("token", token ).json(user);
         }
       })
     }
