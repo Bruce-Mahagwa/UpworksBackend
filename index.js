@@ -22,7 +22,7 @@ const PORT = 3001;
 const app = express();
 //  middleware
 app.use(express.json());
-app.use(cors({  credentials: true, origin: "https://upworks-backend.onrender.com" }));
+app.use(cors({  credentials: true, origin: "https://rad-eclair-6d3025.netlify.app" }));
 app.use(cookieParser())
 app.use("/uploads", express.static(__dirname + "/uploads"))
 // begin of routes
