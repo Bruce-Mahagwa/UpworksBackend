@@ -3,24 +3,26 @@ const PostJobs = require("../models/PostJobs");
 // dependencies
 const jwt = require("jsonwebtoken");
 function postJob(req, res) {
-  const { token } = req.cookies;
-  const { title, description, price, experience, skills } = req.body;
-  if (token) {
-    jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
-      if (err) {
-        console.log(err);
-        throw err;
-      }
-      else {
-        const PostJobDoc = await PostJobs.create({
-          owner: user.id, experience, price, description, title, skills: skills.split(",")
-        });
-        res.json(PostJobDoc);
-      }
-    })
+  try {
+    const { token } = req.cookies;
+    const { title, description, price, experience, skills } = req.body;
+    if (token) {
+      jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        else {
+          const PostJobDoc = await PostJobs.create({
+            owner: user.id, experience, price, description, title, skills: skills.split(",")
+          });
+          res.json(PostJobDoc);
+        }
+      })
+    }
   }
-  else {
-    res.status(404).json(null);
+  catch(e) {
+      res.status(404).json({error: e});
   }
 }
 
