@@ -15,7 +15,7 @@ const start = async () => {
   }
 }
 
-function profileHandler(req, res) {
+async function profileHandler(req, res) {
   await start()
   const { token } = req.cookies;
   if (token) {
