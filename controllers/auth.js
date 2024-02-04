@@ -1,12 +1,24 @@
 // files
 const User = require("../models/User");
+const connectDB = require("../db/connect")
 // dependencies
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 // variables
 const saltrounds = 5;
-
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, () => {
+      console.log("App is listening on port " + PORT)
+    })
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
 async function registerFreelancer(req, res) {
+  await start()
   const { firstname, lastname, email, password, role, country } = req.body.freelancer;
   try {
     const userDoc = await User.create({ firstname, lastname, email, password: bcrypt.hashSync(password, saltrounds), role, country })
@@ -18,6 +30,7 @@ async function registerFreelancer(req, res) {
 }
 
 async function registerClient(req, res) {
+  await start()
   const { firstname, lastname, email, password, role, country } = req.body.client;
   try {
     const userDoc = await User.create({ firstname, lastname, email, password: bcrypt.hashSync(password, saltrounds), role, country })
@@ -29,6 +42,7 @@ async function registerClient(req, res) {
 }
 
 async function login(req, res) {
+  await start()
   const { email, password } = req.body.credentials;
   const user = await User.findOne({ email });
   if (user) {
