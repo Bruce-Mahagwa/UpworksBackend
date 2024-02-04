@@ -29,7 +29,7 @@ async function uploadToS3(path, originalFileName, mimeType) {
     },
   })
 }
-function addProfile(req, res) {
+async function addProfile(req, res) {
   await start()
   const { token } = req.cookies;
   if (token) {
@@ -51,7 +51,7 @@ function addProfile(req, res) {
     res.status(404).json(null)
   }
 }
-function getProfile(req, res) {
+async function getProfile(req, res) {
   await start()
   const { token } = req.cookies;
   jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
