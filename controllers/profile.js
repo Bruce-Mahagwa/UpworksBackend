@@ -1,12 +1,26 @@
 // files
 const Profile = require("../models/Profile");
+const connectDB = require("../db/connect")
 // modules
 const fs = require("fs");
 // dependencies
 const jwt = require("jsonwebtoken");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, () => {
+      console.log("App is listening on port " + PORT)
+    })
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
 async function uploadToS3(path, originalFileName, mimeType) {
+  await start()
   const client = new S3Client({
     region: "us-east-1",
     credentials: {
@@ -16,6 +30,7 @@ async function uploadToS3(path, originalFileName, mimeType) {
   })
 }
 function addProfile(req, res) {
+  await start()
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
@@ -37,6 +52,7 @@ function addProfile(req, res) {
   }
 }
 function getProfile(req, res) {
+  await start()
   const { token } = req.cookies;
   jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
     if (err) {
@@ -51,6 +67,7 @@ function getProfile(req, res) {
   })
 }
 async function addProfileImage(req, res) {
+  await start()
   const { path, originalFileName, mimetype } = req.files[0];
   await uploadToS3(path, originalname, mimetype)
   const parts = originalname.split(".");
