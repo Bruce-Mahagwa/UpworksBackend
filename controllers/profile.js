@@ -4,7 +4,17 @@ const Profile = require("../models/Profile");
 const fs = require("fs");
 // dependencies
 const jwt = require("jsonwebtoken");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
+async function uploadToS3(path, originalFileName, mimeType) {
+  const client = new S3Client({
+    region: "us-east-1",
+    credentials: {
+      accessKeyId: process.env["S3_ACCESS_KEY"],
+      secretAccessKey: process.env["S3_SECRET_ACCESS_KEY"]
+    },
+  })
+}
 function addProfile(req, res) {
   const { token } = req.cookies;
   if (token) {
@@ -41,13 +51,21 @@ function getProfile(req, res) {
   })
 }
 async function addProfileImage(req, res) {
-  const { path, originalname } = req.files[0];
+  const { path, originalFileName, mimetype } = req.files[0];
+  await uploadToS3(path, originalname, mimetype)
   const parts = originalname.split(".");
   const postfix = parts[parts.length - 1];
   let newPath = path + "." + postfix;
-  fs.renameSync(path, newPath);
   newPath = newPath.replace("uploads/", "");
-  res.json(newPath);
+  const data = await client.send(new PutObjectCommand({
+    Bucket: "bruceupworkphotos",
+    Body: fs.readFileSync(path),
+    Key: newPath,
+    ContentType: mimetype,
+    ACL: "public-read"
+  }))
+  return `https://bruceupworkphotos.s3.amazonaws.com/${newPath}`
+
 }
 
 module.exports = { addProfile, addProfileImage, getProfile}; 
