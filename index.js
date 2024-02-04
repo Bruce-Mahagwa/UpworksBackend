@@ -25,6 +25,21 @@ app.use(express.json());
 app.use(cors({  credentials: true, origin: "https://rad-eclair-6d3025.netlify.app" }));
 app.use(cookieParser())
 app.use("/uploads", express.static(__dirname + "/uploads"))
+
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, () => {
+      console.log("App is listening on port " + PORT)
+    })
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+
+
 // begin of routes
 app.post("/register/freelancer", registerFreelancer);
 app.post("/register/client", registerClient);
@@ -39,6 +54,7 @@ app.post("/logout", logout);
 app.post("/addprofile", addProfile);
 app.post("/uploads", upload.array("photos", 100), addProfileImage);
 app.get("/checkProfile/:id", async (req, res) => {
+  await start()
   const { id } = req.params;
   try {
     const ProfileDoc = await Profile.findOne({ owner: id }).exec();
@@ -51,6 +67,7 @@ app.get("/checkProfile/:id", async (req, res) => {
 })
 //update profile
 app.put("/updatetitle/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { title } = req.body
@@ -64,6 +81,7 @@ app.put("/updatetitle/:id", async (req, res) => {
   }
 })
 app.put("/updateskills/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { skills } = req.body
@@ -76,6 +94,7 @@ app.put("/updateskills/:id", async (req, res) => {
   }
 })
 app.put("/updateoverview/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { overview } = req.body
@@ -88,6 +107,7 @@ app.put("/updateoverview/:id", async (req, res) => {
   }
 })
 app.put("/updateimage/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { image } = req.body
@@ -100,6 +120,7 @@ app.put("/updateimage/:id", async (req, res) => {
   }
 })
 app.put("/updatehours/:id", async (req, res) => {
+  await start()
     try {
       const { id } = req.params;
       const { hourly_rate } = req.body
@@ -121,6 +142,7 @@ app.delete("/deleteclientjob", deleteClientJob);
 app.get("/allavailablejobs", getAllAvailableJobs);
 // get single job
 app.get("/singlejob/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     console.log(id)
@@ -134,6 +156,7 @@ app.get("/singlejob/:id", async (req, res) => {
 })
 //edit posted job
 app.put("/editjob/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { title, description, price, skills, experience } = req.body;
@@ -147,6 +170,7 @@ app.put("/editjob/:id", async (req, res) => {
 })
 // post a proposal
 app.post("/submitproposal/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const { price, proposaltext, specific_job } = req.body;
@@ -162,6 +186,7 @@ app.post("/submitproposal/:id", async (req, res) => {
 })
 // get freelancer proposals
 app.get("/freelancerproposals/:id", async (req, res) => {
+  await start()
   const { id } = req.params;
   try {
     const AllProposals = await Proposal.find({ owner: id }).populate("specific_job").exec();
@@ -176,6 +201,7 @@ app.delete("/deletefreelancerproposal", deleteFreelancerProposal)
 // get all freelancers
 app.get("/allfreelancers", fetchAllFreelancers);
 app.get("/individualprofiles/:id", async (req, res) => {
+  await start()
   try {
     const { id } = req.params;
     const Profiles = await Profile.find({ owner: id })
@@ -188,15 +214,4 @@ app.get("/individualprofiles/:id", async (req, res) => {
 })
 // end of routes
 
-const start = async () => {
-  try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(PORT, () => {
-      console.log("App is listening on port " + PORT)
-    })
-  }
-  catch (e) {
-    console.log(e);
-  }
-}
-start();
+
