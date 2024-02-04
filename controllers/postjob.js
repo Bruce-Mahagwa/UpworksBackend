@@ -1,8 +1,21 @@
 // files
 const PostJobs = require("../models/PostJobs");
+const connectDB = require("../db/connect")
 // dependencies
 const jwt = require("jsonwebtoken");
-function postJob(req, res) {
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, () => {
+      console.log("App is listening on port " + PORT)
+    })
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+async function postJob(req, res) {
+  await start()
   try {
     const { token } = req.cookies;
     const { title, description, price, experience, skills } = req.body;
@@ -26,7 +39,8 @@ function postJob(req, res) {
   }
 }
 
-function getPostedJobs(req, res) {
+async function getPostedJobs(req, res) {
+  await start()
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, process.env["JWT_SECRET"], {}, async (err, user) => {
