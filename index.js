@@ -3,7 +3,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const multer = require("multer")
-const upload = multer({ dest: "uploads/" })
+const upload = multer({ dest: "/tmp" })
 require("dotenv").config()
 // files and modules
 const connectDB = require("./db/connect");
